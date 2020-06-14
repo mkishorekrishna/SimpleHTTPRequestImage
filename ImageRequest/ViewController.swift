@@ -26,23 +26,47 @@ class ViewController: UIViewController {
             print("Cannot create URL")
             return
         }
-        //retrieving image is data task
-        let task = URLSession.shared.dataTask(with: imageURL) {
-            (data, response, error) in
+        //        //retrieving image is data task
+        //        let task = URLSession.shared.dataTask(with: imageURL) {
+        //            (data, response, error) in
+        //
+        //            guard let data = data else {
+        //                print("no data")
+        //                return
+        //            }
+        //            let downloadedImage = UIImage(data: data)
+        //            // we need to load the image in main thread
+        //            DispatchQueue.main.async {
+        //                self.imageView.image = downloadedImage
+        //            }
+        //
+        //            }
+        //        //initially task will be in suspended state, we need to resume
+        //        task.resume()
+        
+        // retreiving the image using download task
+        
+        let task = URLSession.shared.downloadTask(with: imageURL) {location,response,error in
             
-            guard let data = data else {
-                print("no data")
+            guard let location = location else {
+                print("location is nil")
                 return
             }
-            let downloadedImage = UIImage(data: data)
-            // we need to load the image in main thread
-            DispatchQueue.main.async {
-                self.imageView.image = downloadedImage
-            }
+            print(location)
             
+            // load the date from file
+            let imageData = try! Data(contentsOf: location)
+            // turn to image
+            let image = UIImage(data: imageData)
+            //set image in imageview
+            DispatchQueue.main.async {
+                self.imageView.image = image
             }
-        //initially task will be in suspended state, we need to resume
+        }
+        
         task.resume()
+        
+        
     }
     
     
